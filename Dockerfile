@@ -1,7 +1,12 @@
 from ubuntu:precise
 
+run DEBIAN_FRONTEND=noninteractive apt-get update -q -y
+run DEBIAN_FRONTEND=noninteractive apt-get -q -y install curl gcc
+run DEBIAN_FRONTEND=noninteractive apt-get -q -y install make git
+run DEBIAN_FRONTEND=noninteractive apt-get -q -y install autoconf libtool pkg-config
+
 # oRTP, https://openbsc.osmocom.org/trac/wiki/network_from_scratch#oRTP
-run curl -O http://download.savannah.gnu.org/releases/linphone/ortp/sources/ortp-0.22.0.tar.gz \
+run curl -O -L http://download.savannah.gnu.org/releases/linphone/ortp/sources/ortp-0.22.0.tar.gz \
     && tar xvzf ortp-0.22.0.tar.gz \
     && cd ortp-0.22.0 \
     && ./configure && make && make install \
@@ -25,10 +30,14 @@ run git clone git://git.osmocom.org/libosmo-abis.git \
     && ldconfig \
     && cd ..
 
+run DEBIAN_FRONTEND=noninteractive apt-get -q -y install libdbd-sqlite3 libdbi0-dev
+
 # OsmoNITB, https://openbsc.osmocom.org/trac/wiki/network_from_scratch#OsmoNITB
 run git clone git://git.osmocom.org/openbsc.git \
     && cd openbsc/openbsc/ \
     && git checkout -b jolly/testing origin/jolly/testing \
     && autoreconf -i \
     && ./configure && make && make install \
-    cd ../..
+    && cd ../..
+
+add open-bsc.cfg /open-bsc.cfg
