@@ -1,9 +1,7 @@
 from ubuntu:precise
 
 run DEBIAN_FRONTEND=noninteractive apt-get update -q -y
-run DEBIAN_FRONTEND=noninteractive apt-get -q -y install curl gcc
-run DEBIAN_FRONTEND=noninteractive apt-get -q -y install make git
-run DEBIAN_FRONTEND=noninteractive apt-get -q -y install autoconf libtool pkg-config
+run DEBIAN_FRONTEND=noninteractive apt-get -q -y install curl gcc make git autoconf libtool pkg-config libdbd-sqlite3 libdbi0-dev
 
 # oRTP, https://openbsc.osmocom.org/trac/wiki/network_from_scratch#oRTP
 run curl -O -L http://download.savannah.gnu.org/releases/linphone/ortp/sources/ortp-0.22.0.tar.gz \
@@ -30,7 +28,6 @@ run git clone git://git.osmocom.org/libosmo-abis.git \
     && ldconfig \
     && cd ..
 
-run DEBIAN_FRONTEND=noninteractive apt-get -q -y install libdbd-sqlite3 libdbi0-dev
 
 # OsmoNITB, https://openbsc.osmocom.org/trac/wiki/network_from_scratch#OsmoNITB
 run git clone git://git.osmocom.org/openbsc.git \
