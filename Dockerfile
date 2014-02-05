@@ -4,7 +4,7 @@ run DEBIAN_FRONTEND=noninteractive apt-get update -q -y
 run DEBIAN_FRONTEND=noninteractive apt-get -q -y install curl gcc make git autoconf libtool pkg-config libdbd-sqlite3 libdbi0-dev
 
 # oRTP, https://openbsc.osmocom.org/trac/wiki/network_from_scratch#oRTP
-run curl -O -L http://download.savannah.gnu.org/releases/linphone/ortp/sources/ortp-0.22.0.tar.gz \
+run cd /root && curl -O -L http://download.savannah.gnu.org/releases/linphone/ortp/sources/ortp-0.22.0.tar.gz \
     && tar xvzf ortp-0.22.0.tar.gz \
     && cd ortp-0.22.0 \
     && ./configure && make && make install \
@@ -12,7 +12,7 @@ run curl -O -L http://download.savannah.gnu.org/releases/linphone/ortp/sources/o
     && cd ..
 
 # libosmocore, https://openbsc.osmocom.org/trac/wiki/network_from_scratch#libosmocore
-run git clone git://git.osmocom.org/libosmocore.git \
+run cd /root && git clone git://git.osmocom.org/libosmocore.git \
     && cd libosmocore \
     && autoreconf -i \
     && ./configure && make && make install \
@@ -20,7 +20,7 @@ run git clone git://git.osmocom.org/libosmocore.git \
     && cd ..
 
 # libosmo-abis, https://openbsc.osmocom.org/trac/wiki/network_from_scratch#libosmo-abis
-run git clone git://git.osmocom.org/libosmo-abis.git \
+run cd /root && git clone git://git.osmocom.org/libosmo-abis.git \
     && cd libosmo-abis \
     && git checkout -b jolly/multi-trx origin/jolly/multi-trx \
     && autoreconf -i \
@@ -30,11 +30,12 @@ run git clone git://git.osmocom.org/libosmo-abis.git \
 
 
 # OsmoNITB, https://openbsc.osmocom.org/trac/wiki/network_from_scratch#OsmoNITB
-run git clone git://git.osmocom.org/openbsc.git \
+run cd /root && git clone git://git.osmocom.org/openbsc.git \
     && cd openbsc/openbsc/ \
     && git checkout -b jolly/testing origin/jolly/testing \
     && autoreconf -i \
     && ./configure && make && make install \
     && cd ../..
 
-add open-bsc.cfg /open-bsc.cfg
+
+add open-bsc.cfg /root/open-bsc.cfg
