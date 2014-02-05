@@ -37,5 +37,6 @@ run cd /root && git clone git://git.osmocom.org/openbsc.git \
     && ./configure && make && make install \
     && cd ../..
 
+run DEBIAN_FRONTEND=noninteractive apt-get -q -y install telnet lsof
 
 add open-bsc.cfg /root/open-bsc.cfg
