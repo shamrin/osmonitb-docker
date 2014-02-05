@@ -5,6 +5,7 @@ cd /vagrant
 docker build -rm -t shamrin/osmonitb .
 
 ## Running under bash
+env FORWARD_PORTS=3002,3003 vagrant up --no-provision
 docker run -i -t -p 3002:3002 -p 3003:3003 shamrin/osmonitb /bin/bash
 osmo-nitb -c /root/open-bsc.cfg -l /root/hlr.sqlite3 -P -C --debug=DRLL:DCC:DMM:DRR:DRSL:DNM &
 lsof -i
