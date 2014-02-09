@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+import sys, socket
+
+BUFFER_SIZE = 1024
+MESSAGE = "Hello, World!"
+
+def main(ip, port):
+    port = int(port)
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print 'connect to %s:%d' % (ip, port)
+    s.connect((ip, port))
+    print 'sending %r' % (MESSAGE,)
+    s.send(MESSAGE)
+    data = s.recv(BUFFER_SIZE)
+    s.close()
+    print "received %r" % (data,)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 3:
+        print 'usage: %s IP PORT' % sys.argv[0]
+    else:
+        main(*sys.argv[1:])
