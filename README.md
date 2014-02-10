@@ -3,10 +3,10 @@ vagrant up
 vagrant ssh
 cd /vagrant
 docker build -rm -t shamrin/osmonitb .
-vagrant halt
 
 ## Running and entering Linux VM
-env FORWARD_PORTS=3002,3003 vagrant up --no-provision
+vagrant halt
+env FORWARD_PORTS=3002,3003 FORWARD_UDP_PORTS=30000,30001,30002,30003,30004,30005,30006,30007,30008 vagrant up --no-provision
 vagrant ssh
 
 ## Running under bash

@@ -20,8 +20,12 @@ VAGRANT_CORES = ENV['VAGRANT_CORES'] || 1
 
 # You may also provide a comma-separated list of ports
 # for Vagrant to forward. For example:
-# $ FORWARD_PORTS=8080,27017 vagrant [up|reload]
+# $ env FORWARD_PORTS=8080,27017 vagrant [up|reload]
 FORWARD_PORTS = ENV['FORWARD_PORTS']
+
+# The same for UDP ports:
+# $ env FORWARD_UDP_PORTS=30001,30002 vagrant [up|reload]
+FORWARD_UDP_PORTS = ENV['FORWARD_UDP_PORTS']
 
 # A script to upgrade from the 12.04 kernel to the raring backport kernel (3.8)
 # and install docker.
@@ -190,6 +194,22 @@ if forward_ports.any?
   Vagrant::VERSION >= "1.1.0" and Vagrant.configure("2") do |config|
     forward_ports.each do |port|
       config.vm.network :forwarded_port, :host => port, :guest => port, auto_correct: true
+    end
+  end
+end
+
+forward_udp_ports = []
+forward_udp_ports += FORWARD_UDP_PORTS.split(',').map{|i| i.to_i } if FORWARD_UDP_PORTS
+if forward_udp_ports.any?
+  Vagrant::VERSION < "1.1.0" and Vagrant::Config.run do |config|
+    forward_udp_ports.each do |port|
+      config.vm.forward_port port, port, protocol: 'udp'
+    end
+  end
+
+  Vagrant::VERSION >= "1.1.0" and Vagrant.configure("2") do |config|
+    forward_udp_ports.each do |port|
+      config.vm.network :forwarded_port, :host => port, :guest => port, :protocol => 'udp', auto_correct: true
     end
   end
 end
