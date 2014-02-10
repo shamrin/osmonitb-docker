@@ -41,3 +41,5 @@ run DEBIAN_FRONTEND=noninteractive apt-get -q -y install telnet lsof
 
 add open-bsc.cfg /root/open-bsc.cfg
 add utils /root/utils/
+
+volume ["/var/db"]
