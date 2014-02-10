@@ -1,0 +1,13 @@
+diff --git a/openbsc/src/libbsc/abis_rsl.c b/openbsc/src/libbsc/abis_rsl.c
+index e356858..ac65658 100644
+--- a/openbsc/src/libbsc/abis_rsl.c
++++ b/openbsc/src/libbsc/abis_rsl.c
+@@ -1901,6 +1901,8 @@ int rsl_ipacc_mdcx(struct gsm_lchan *lchan, uint32_t ip, uint16_t port,
+ 	lchan->abis_ip.speech_mode = 0x00 | ipa_smod_s_for_lchan(lchan);
+ 	lchan->abis_ip.rtp_payload = ipa_rtp_pt_for_lchan(lchan);
+ 
++	ip = {IP_HEX}; /* hardcode external IP ({IP}) */
++
+ 	ia.s_addr = htonl(ip);
+ 	DEBUGP(DRSL, "%s IPAC_MDCX IP=%s PORT=%d RTP_PAYLOAD=%d RTP_PAYLOAD2=%d "
+ 		"CONN_ID=%d speech_mode=0x%02x\n", gsm_lchan_name(lchan),

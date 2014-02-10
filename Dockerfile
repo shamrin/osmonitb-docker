@@ -39,7 +39,9 @@ run cd /root && git clone git://git.osmocom.org/openbsc.git \
 
 run DEBIAN_FRONTEND=noninteractive apt-get -q -y install telnet lsof
 
-add open-bsc.cfg /root/open-bsc.cfg
-add utils /root/utils/
+add open-bsc.cfg /root/
+add utils /root/
+add hardcode-external-ip.patch /root/
+add start /start
 
 volume ["/var/db"]
