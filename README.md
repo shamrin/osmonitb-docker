@@ -1,6 +1,7 @@
 ## OpenBSC, containerized
+## osmonitb-docker - OpenBSC NITB Docker container
 
-Docker container for [OpenBSC][0], **the** open source implementation of GSM [Base Station Controller][1], which - together with [BTS][2] - makes up a functional GSM "cell". Here's the configuration tested:
+`osmonitb-docker` is a Docker container for [OpenBSC][0] in [osmo-nitb][4] mode. OpenBSC is **the** implementation of GSM [Base Station Controller][1]. Here's the configuration tested:
 
 ```
  +----------------------------------------+
@@ -26,9 +27,9 @@ Docker container for [OpenBSC][0], **the** open source implementation of GSM [Ba
  +----------------------------------------+
 ```
 
-BTS was comprised of [Fairwaves][5] UmSITE hardware and [OsmoBTS][3] software.
+[BTS][2] was comprised of [Fairwaves][5] UmSITE hardware and [OsmoBTS][3] software.
 
-**Note:** OpenBSC runs perfectly fine inside UmSITE computer, alongside OsmoBTS. But OpenBSC could control *several* BTSes. Addtionaly, the above configuration is convienient during development. 
+**Note:** OpenBSC runs perfectly fine inside UmSITE computer, alongside OsmoBTS. But OpenBSC could control *several* BTSes. Additionally, the above configuration is convenient during development. 
 
 [0]: http://openbsc.osmocom.org/trac/wiki/OpenBSC
 [1]: https://en.wikipedia.org/wiki/Base_station_subsystem#Base_station_controller
@@ -39,7 +40,7 @@ BTS was comprised of [Fairwaves][5] UmSITE hardware and [OsmoBTS][3] software.
 
 ### Run and enter Vagrant VM
 
-**(skip if running Ubuntu natively)**
+*(skip if running Ubuntu natively)*
 
     vagrant up
     vagrant ssh
@@ -51,27 +52,38 @@ BTS was comprised of [Fairwaves][5] UmSITE hardware and [OsmoBTS][3] software.
 
 ### Run networked Vagrant VM
 
-**(skip if running Ubuntu natively)**
+*(skip if running Ubuntu natively)*
 
-Bridged setup is recommended, but make sure you can trust your network (we couldn't make port mapping work, there were problems with RTP voice traffic):
+VM directly connects to the same networkg as your host, so make sure you can trust your network:
 
+    exit
     vagrant halt
     env BRIDGED_NETWORK=yes vagrant up --no-provision
     vagrant ssh
 
-Then check IP address with `ifconfig` inside the VM.
+Then check Docker host IP address with `ifconfig` inside the VM.
 
 ### Run Docker container
 
-    docker run -v $HOME/db:/var/db -i -t -p 3002:3002 -p 3003:3003 -p 30000:30000/udp -p 30001:30001/udp -p 30002:30002/udp -p 30003:30003/udp -p 30004:30004/udp -p 30005:30005/udp -p 30006:30006/udp -p 30007:30007/udp -p 30008:30008/udp 30009:30009/udp 30010:30010/udp 30012:30012/udp 30012:30012/udp shamrin/osmonitb /start OUR_IP
+    docker run -v $HOME/db:/var/db -i -t -p 3002:3002 -p 3003:3003 -p 30000:30000/udp -p 30001:30001/udp -p 30002:30002/udp -p 30003:30003/udp -p 30004:30004/udp -p 30005:30005/udp -p 30006:30006/udp -p 30007:30007/udp -p 30008:30008/udp 30009:30009/udp 30010:30010/udp 30011:30011/udp 30012:30012/udp shamrin/osmonitb /start 10.0.0.10
 
-Replace `OUR_IP` with the IP address you found above.
+Replace `10.0.0.10` with the IP address of Docker host.
+
+**Note:** Docker [doesn't yet allow a range of ports][6] to be opened, that's why (RTP) ports has to be all specified one by one. Add ports to support more calls.
+
+[6]: https://github.com/dotcloud/docker/issues/1834
 
 ### Configure OsmoBTS
 
-Set `oml remote-ip` in OsmoBTS config to point to OpenBSC IP address (OUR_IP above). E.g.:
+Set `oml remote-ip` in OsmoBTS config to point to OpenBSC IP address (the same as above) and make sure OsmoBTS IP is reachable from outside. E.g.:
 
    oml remote-ip 10.0.0.10
+   ...
+   rtp bind-ip 0.0.0.0
+
+Your personal GSM network is now be ready for use!
+
+**Note:** run the system either in faraday cage or with proper licenses.
 
 ### Attach to running container
 
