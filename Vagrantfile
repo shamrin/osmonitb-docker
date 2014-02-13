@@ -43,6 +43,12 @@ fi
 
 # Enable memory cgroup and swap accounting
 sed -i 's/GRUB_CMDLINE_LINUX=""/GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"/g' /etc/default/grub
+
+# Always keep GRUB timeout, even if previous boot was unsucessfull. It's a
+# workaround for https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/797544.
+# If it doesn't work, try this: https://bugs.launchpad.net/ubuntu/+source/grub2/+bug/872244/comments/1.
+echo "GRUB_RECORDFAIL_TIMEOUT=5" >> /etc/default/grub
+
 update-grub
 
 # Adding an apt gpg key is idempotent.
