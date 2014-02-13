@@ -7,8 +7,11 @@ if test -z "$ip"; then
 fi
 
 cd /root/openbsc/openbsc/
-cat /root/hardcode-external-ip.patch | python -c "import sys, struct, socket; print sys.stdin.read().format(IP_HEX=hex(struct.unpack('>I', socket.inet_aton('$ip'))[0]), IP='$ip')" | patch -p2
+
+# patch the patch (filling out IP_HEX and IP), then apply the result to openbsc
+cat /root/hardcode-external-ip.patch | python -c "import sys, struct, socket; print sys.stdin.read().format(IP='$ip', IP_HEX=hex(struct.unpack('>I', socket.inet_aton('$ip'))[0]))" | patch -p2
 make && make install
+
 cd /
 
 osmo-nitb -c /root/open-bsc.cfg -l /var/db/hlr.sqlite -P -C --debug=DRLL:DCC:DMM:DRR:DRSL:DNM:DMNCC
