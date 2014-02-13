@@ -1,4 +1,3 @@
-## OpenBSC, containerized
 ## osmonitb-docker - OpenBSC NITB Docker container
 
 `osmonitb-docker` is a Docker container for [OpenBSC][0] in [osmo-nitb][4] mode. OpenBSC is **the** implementation of GSM [Base Station Controller][1]. Here's the configuration tested:
@@ -70,21 +69,20 @@ Reboot the VM and run `ifconfig` to check Docker host IP address:
 
 Replace `10.0.0.10` with the IP address of Docker host.
 
-**Note:** Docker [doesn't yet allow a range of ports][6] to be opened, that's why (RTP) ports has to be all specified one by one. Add ports to support more calls.
+**Note:** Docker [doesn't yet allow a range of ports][6] to be opened, that's why (RTP) ports has to be all specified one by one. Add ports to support more phone calls.
 
 [6]: https://github.com/dotcloud/docker/issues/1834
 
 ### Configure OsmoBTS
 
-Set `oml remote-ip` in OsmoBTS config to point to OpenBSC IP address (the same as above) and make sure OsmoBTS IP is reachable from outside. E.g.:
+Set `oml remote-ip` in OsmoBTS config to point to OpenBSC IP address (the same as above) and make sure OsmoBTS IP is reachable. E.g.:
 
    oml remote-ip 10.0.0.10
-   ...
    rtp bind-ip 0.0.0.0
 
-Your personal GSM network is now be ready for use!
+Your personal GSM network is now ready!
 
-**Note:** run the system either in faraday cage or with proper licenses.
+**Note:** run either in faraday cage or with proper licenses.
 
 ### Attach to running container
 
