@@ -10,7 +10,10 @@ AWS_AMI = ENV['AWS_AMI'] || "ami-69f5a900"
 AWS_INSTANCE_TYPE = ENV['AWS_INSTANCE_TYPE'] || 't1.micro'
 SSH_PRIVKEY_PATH = ENV['SSH_PRIVKEY_PATH']
 PRIVATE_NETWORK = ENV['PRIVATE_NETWORK']
-BRIDGED_NETWORK = ENV['BRIDGED_NETWORK']
+
+# 'yes' is the default because port mapping didn't work, RTP over UDP voice
+# traffic failed to go through in one direction
+BRIDGED_NETWORK = (ENV['BRIDGED_NETWORK'] || 'yes') == 'yes'
 
 # Boolean that forwards the Docker dynamic ports 49000-49900
 # See http://docs.docker.io/en/latest/use/port_redirection/ for more
@@ -225,7 +228,7 @@ if !PRIVATE_NETWORK.nil?
   end
 end
 
-if !BRIDGED_NETWORK.nil?
+if BRIDGED_NETWORK
   Vagrant::Config.run do |config|
     config.vm.network :bridged
   end

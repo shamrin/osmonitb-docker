@@ -42,7 +42,7 @@
 
 *(skip if running Ubuntu natively)*
 
-    vagrant up
+    env BRIDGED_NETWORK=no vagrant up
     vagrant ssh
     cd /vagrant
 
@@ -50,18 +50,19 @@
 
     docker build -rm -t shamrin/osmonitb .
 
-### Run networked Vagrant VM
+### Reboot Vagrant VM
 
 *(skip if running Ubuntu natively)*
 
-VM directly connects to the same networkg as your host, so make sure you can trust your network:
+Reboot the VM and run `ifconfig` to check Docker host IP address:
 
     exit
     vagrant halt
-    env BRIDGED_NETWORK=yes vagrant up --no-provision
+    vagrant up --no-provision # with bridged network
     vagrant ssh
+    ifconfig
 
-Then check Docker host IP address with `ifconfig` inside the VM.
+**Note:** VM directly connects (via bridge) to the same network as your host, so make sure you can trust your network.
 
 ### Run Docker container
 
