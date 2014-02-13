@@ -65,7 +65,7 @@ Reboot the VM and run `ifconfig` to check Docker host IP address:
 
 ### Run Docker container
 
-    docker run -v $HOME/db:/var/db -i -t -p 3002:3002 -p 3003:3003 -p 30000:30000/udp -p 30001:30001/udp -p 30002:30002/udp -p 30003:30003/udp -p 30004:30004/udp -p 30005:30005/udp -p 30006:30006/udp -p 30007:30007/udp -p 30008:30008/udp 30009:30009/udp 30010:30010/udp 30011:30011/udp 30012:30012/udp shamrin/osmonitb /start 10.0.0.10
+    docker run -v $HOME/db:/var/db -i -t -p 3002:3002 -p 3003:3003 -p 30000:30000/udp -p 30001:30001/udp -p 30002:30002/udp -p 30003:30003/udp -p 30004:30004/udp -p 30005:30005/udp -p 30006:30006/udp -p 30007:30007/udp -p 30008:30008/udp -p 30009:30009/udp -p 30010:30010/udp -p 30011:30011/udp -p 30012:30012/udp shamrin/osmonitb /start 10.0.0.10
 
 Replace `10.0.0.10` with the IP address of Docker host.
 
