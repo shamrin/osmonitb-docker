@@ -78,8 +78,8 @@ Replace `10.0.0.10` with the IP address of Docker host, `GSM1800` with the band 
 
 Set `oml remote-ip` in OsmoBTS config to point to OpenBSC IP address (the same as above) and make sure OsmoBTS IP is reachable. E.g.:
 
-   oml remote-ip 10.0.0.10
-   rtp bind-ip 0.0.0.0
+    oml remote-ip 10.0.0.10
+    rtp bind-ip 0.0.0.0
 
 Your personal GSM network is now ready!
 
