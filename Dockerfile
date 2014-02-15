@@ -1,5 +1,7 @@
 from ubuntu:precise
 
+# based on https://openbsc.osmocom.org/trac/wiki/network_from_scratch
+
 run DEBIAN_FRONTEND=noninteractive apt-get update -q -y
 run DEBIAN_FRONTEND=noninteractive apt-get -q -y install curl gcc make git autoconf libtool pkg-config libdbd-sqlite3 libdbi0-dev
 
@@ -37,11 +39,13 @@ run cd /root && git clone git://git.osmocom.org/openbsc.git \
     && ./configure && make && make install \
     && cd ../..
 
+# for debugging
 run DEBIAN_FRONTEND=noninteractive apt-get -q -y install telnet lsof
 
-add open-bsc.cfg /root/
+add open-bsc.cfg.template /root/
 add utils /root/
-add hardcode-external-ip.patch /root/
-add start /start
+add hardcode-external-ip.patch.template /root/
+add start-nitb /usr/local/bin/
+add docopt.py /usr/lib/python2.7/dist-packages/
 
 volume ["/var/db"]

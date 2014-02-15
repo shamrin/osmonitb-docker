@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+
+"""Run OpenBSC via osmo-nitb commmand
+
+Usage:
+  start-nitb [options] BAND ARFCN0 ARFCN1 [-- <osmo-nitb-arguments>...]
+  start-nitb --help
+
+Options:
+  -h --help           Show this screen
+  --version           Show version
+  -i --ip=ADDR        External IP address of OpenBSC host
+  -t --template=FILE  OpenBSC config template [default: /root/open-bsc.cfg.template]
+  -n --network=NAME   GSM network name [default: TestNet]
+
+Default osmo-nitb arguments (you can override only some of them):
+%s
+"""
+
+import sys
+import struct
+import socket
+import os
+import os.path
+from string import Formatter
+import subprocess
+
+from docopt import docopt, DocoptExit
+
+NITB_DEFAULT = "-P -C -c /root/open-bsc.cfg -l /var/db/hlr.sqlite3 -d DRLL:DCC:DMM:DRR:DRSL:DNM"
+
+NITB_DOC = """
+Usage:
+    osmo-nitb [options]
+Options:
+  -h --help  this text
+  -d OPTION --debug=OPTION  enable debugging
+  -D --daemonize  Fork the process into a background daemon
+  -c --config-file FILENAME  The config file to use.
+  -s --disable-color
+  -l --database DB-NAME  The database to use
+  -a --authorize-everyone  Authorize every new subscriber. Dangerous!
+  -p --pcap file   The filename of the pcap file
+  -T --timestamp  Prefix every log line with a timestamp
+  -V --version  Print the version of OpenBSC.
+  -P --rtp-proxy  Enable the RTP Proxy code inside OpenBSC
+  -e --log-level=NUMBER  Set a global loglevel.
+  -m --mncc-sock  Disable built-in MNCC handler and offer socket
+  -C --no-dbcounter  Disable regular syncing of counters to database
+  -r --rf-ctl NAME  A unix domain socket to listen for cmds.
+"""
+
+def parse_nitb_args(args):
+    try:
+        return docopt(NITB_DOC, argv=args, help=False)
+    except DocoptExit as e:
+        raise ValueError('bad arguments: %r' % args)
+
+def noisy_call(*args, **kw):
+    print '%s$' % kw['cwd'] if 'cwd' else '', ' '.join(args)
+    subprocess.check_call(args, **kw)
+
+PATCH_TEMPLATE = '/root/hardcode-external-ip.patch.template'
+
+if __name__ == '__main__':
+    arguments = docopt(__doc__ % NITB_DEFAULT, version='start-nitb 1.0', options_first=True)
+
+    # process osmo-nitb arguments
+    try:
+        nitb_args = parse_nitb_args(arguments['<osmo-nitb-arguments>'])
+    except ValueError as e:
+        sys.exit('Error: ' + str(e))
+
+    default = parse_nitb_args(NITB_DEFAULT)
+    nitb_args = {k: nitb_args[k] or default[k] for k in nitb_args}
+    nitb_args = ['osmo-nitb'] + [k if v is True else '%s=%s' % (k, v)
+                                 for k, v in nitb_args.items()
+                                 if v is not False and v is not None]
+
+    # prepare OpenBSC patch, filling out IP_HEX and IP
+    ip = arguments['--ip']
+    if ip is not None:
+        ip_hex = hex(struct.unpack('>I', socket.inet_aton(ip))[0])
+        patch = open(PATCH_TEMPLATE).read().format(IP=ip, IP_HEX=ip_hex)
+        patchname = os.path.splitext(PATCH_TEMPLATE)[0]
+        open(patchname, 'w').write(patch)
+        noisy_call("patch", "-p1", "-i", patchname, cwd="/root/openbsc/")
+        noisy_call("make >/dev/null && make install >/dev/null", cwd="/root/openbsc/openbsc", shell=True)
+
+    # prepare OpenBSC config
+    config_template = arguments['--template']
+    data = open(config_template).read()
+    keys = {k[1]: arguments[k[1]]
+            for k in Formatter().parse(data) if k[1] and k[1] in arguments}
+    keys['NETWORK'] = arguments['--network']
+    config = data.format(**keys)
+    open(os.path.splitext(config_template)[0], 'w').write(config)
+
+    print '$', ' '.join(nitb_args)
+    os.execvp(nitb_args[0], nitb_args)
