@@ -90,3 +90,7 @@ Your personal GSM network is now ready!
     docker ps --no-trunc # note full container ID
     sudo lxc-attach -n FULL_CONTAINER_ID
     telnet localhost 4242 # OpenBSC VTY
+
+### See also
+
+* https://habrahabr.ru/post/213845/ (in Russian)
